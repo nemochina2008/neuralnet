@@ -4,13 +4,15 @@
 # https://www.r-bloggers.com/fitting-a-neural-network-in-r-neuralnet-package/
 # data dictionary http://www.clemson.edu/economics/faculty/wilson/R-tutorial/analyzing_data.html
 
-install.packages("plyr")
+library(neuralnet)
+library(boot)
+library(plyr)
+library(MASS)
 
 
 # this is a code with Neural Network tests
 
 set.seed(500)
-library(MASS)
 data <- Boston
 
 apply(data,2,function(x) sum(is.na(x)))
@@ -42,7 +44,6 @@ test_ <- scaled[-index,]
 # usually 2/3 of the input size. At least in my brief experience testing again and again is the best solution since there is
 # no guarantee that any of these rules will fit your model best.
 
-library(neuralnet)
 n <- names(train_)
 f <- as.formula(paste("medv ~ ", paste(n[!n %in% "medv"], collapse = "+")))
 
@@ -74,7 +75,6 @@ par(mfrow = c(1, 2))
 
 
 # cross validate linear model
-library(boot)
 set.seed(200)
 lm.fit <- glm(medv~.,data=data)
 cv.glm(data,lm.fit,K=10)$delta[1]
@@ -85,7 +85,6 @@ set.seed(450)
 cv.error <- NULL
 k <- 10
 
-library(plyr) 
 pbar <- create_progress_bar('text')
 pbar$init(k)
 
@@ -114,4 +113,7 @@ cv.error
 boxplot(cv.error,xlab='MSE CV',col='cyan',
         border='blue',names='CV error (MSE)',
         main='CV error (MSE) for NN',horizontal=TRUE)
+
+
+
 
